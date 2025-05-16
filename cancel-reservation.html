@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予約取り消し</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>予約取り消し</h1>
+        <div class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav id="side-menu" class="hidden">
+            <ul class="side-menu-main">
+                <li><a href="index.html">メインメニュー</a></li>
+                <li><a href="current-reservations.html">現在の予約状況</a></li>
+                <li><a href="reservation.html">予約登録</a></li>
+            </ul>
+            <ul class="side-menu-bottom">
+                <li><a href="#">お問い合わせ</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="date-selection">
+            <label for="date">日付:</label>
+            <input type="date" id="date" name="date" required>
+        </section>
+        <section id="reservations">
+            <h2>予約一覧</h2>
+            <table id="reservation-table">
+                <thead>
+                    <tr>
+                        <th>番号</th>
+                        <th>会社名</th>
+                        <th>ドライバー名</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="reservation-list">
+                    <tr>
+                        <td colspan="4">現在の登録はありません</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 荷受け予約システム</p>
+    </footer>
+    <div id="overlay" class="hidden" onclick="closeMenu()"></div>
+    <script>
+        // 日付フィールドのデフォルト値を設定
+        const dateField = document.getElementById('date');
+        const now = new Date();
+        const hours = now.getHours();
+        const defaultDate = new Date(now);
+
+        if (hours >= 12) {
+            defaultDate.setDate(defaultDate.getDate() + 1);
+        }
+
+        const year = defaultDate.getFullYear();
+        const month = String(defaultDate.getMonth() + 1).padStart(2, '0');
+        const day = String(defaultDate.getDate()).padStart(2, '0');
+
+        dateField.value = `${year}-${month}-${day}`;
+
+        // 予約情報を取得して表示
+        const reservationList = document.getElementById('reservation-list');
+
+        function updateReservations() {
+            const selectedDate = dateField.value;
+            const reservations = JSON.parse(localStorage.getItem('reservations')) || [];
+            const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
+
+            if (filteredReservations.length === 0) {
+                reservationList.innerHTML = '<tr><td colspan="4">現在の登録はありません</td></tr>';
+            } else {
+                reservationList.innerHTML = filteredReservations.map((reservation, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${reservation.companyName}</td>
+                        <td>${reservation.driverName}</td>
+                        <td><button onclick="deleteReservation(${index}, '${selectedDate}')">削除</button></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function deleteReservation(index, date) {
+            const reservations = JSON.parse(localStorage.getItem('reservations')) || [];
+            const filteredReservations = reservations.filter(reservation => reservation.date !== date || reservations.indexOf(reservation) !== index);
+            localStorage.setItem('reservations', JSON.stringify(filteredReservations));
+            alert('予約を削除しました');
+            updateReservations();
+        }
+
+        // 日付変更時に予約情報を更新
+        dateField.addEventListener('change', updateReservations);
+
+        // 初期表示
+        updateReservations();
+    </script>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            console.log('Menu element:', menu); // Debug log
+            console.log('Overlay element:', overlay); // Debug log
+            if (menu && overlay && window.innerWidth < 768) {
+                console.log('Menu state before toggle:', menu.classList.contains('hidden'));
+                menu.classList.toggle('hidden');
+                overlay.classList.toggle('hidden');
+                console.log('Menu state after toggle:', menu.classList.contains('hidden'));
+            }
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            if (menu && overlay && window.innerWidth < 768) {
+                menu.classList.add('hidden');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            const menu = document.getElementById('side-menu');
+            if (window.innerWidth >= 768) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const menu = document.getElementById('side-menu');
+            if (window.innerWidth >= 768) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        });
+
+        document.querySelector('.menu-toggle').addEventListener('click', (event) => {
+            event.stopPropagation();
+            console.log('Menu toggle clicked'); // Debug log
+            toggleMenu();
+        });
+    </script>
+    <script>
+        // URLパラメータから拠点名を取得
+        function getBranch() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('branch') || 'kagoshima';
+        }
+        function getBranchDisplayName(branch) {
+            switch(branch) {
+                case 'kagoshima':
+                    return '鹿児島流通センター';
+                default:
+                    return branch;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const branch = getBranch();
+            const header = document.querySelector('header h1');
+            if(header && branch) {
+                header.innerHTML = `荷受け予約システム<br>（拠点: ${getBranchDisplayName(branch)}）`;
+            }
+            document.querySelectorAll('a').forEach(a => {
+                if(a.href && a.getAttribute('href').endsWith('.html')) {
+                    const url = new URL(a.href, window.location.origin);
+                    url.searchParams.set('branch', branch);
+                    a.href = url.pathname + url.search;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

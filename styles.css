@@ -1,0 +1,520 @@
+html, body {
+    height: 100%;
+}
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background: #0078d7;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+    position: relative;
+}
+
+header h1 {
+    font-size: clamp(1.2rem, 5vw, 2.2rem); /* ウィンドウ幅に応じて自動調整 */
+    line-height: 1.2;
+    word-break: break-all;
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: clamp(1.1rem, 7vw, 1.5rem); /* スマホでさらに小さく */
+    }
+}
+
+header h1 br {
+    display: block;
+}
+
+main {
+    padding: 2rem;
+    flex: 1 0 auto;
+}
+
+form {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+}
+
+form input, form button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form button {
+    background: #0078d7;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background: #005bb5;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    background: #333;
+    color: #fff;
+    flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: static;
+    z-index: 1;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.menu-button {
+    display: inline-block;
+    min-width: 220px;
+    max-width: 300px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 1em 0;
+    font-size: 1.2rem;
+    background: #0078d7;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.menu-button:hover {
+    background: #005bb5;
+}
+
+.menu-button:active {
+    transform: scale(0.95);
+}
+
+.back-to-menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #0078d7;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.back-to-menu:hover {
+    background-color: #005bb5;
+}
+
+#reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    text-align: left;
+}
+
+#reservation-table th, #reservation-table td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+}
+
+#reservation-table th {
+    background-color: #f4f4f9;
+    font-weight: bold;
+}
+
+#reservation-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.menu-toggle {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    display: block;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 4px;
+    width: 28px;
+    margin: 6px auto;
+    border-radius: 2px;
+    transition: all 0.3s;
+    background: #333;
+}
+
+#side-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 270px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 80px;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    transform: translateX(100%);
+    min-height: 0;
+}
+
+#side-menu.hidden {
+    right: -250px;
+}
+
+#side-menu:not(.hidden) {
+    transform: translateX(0);
+}
+
+#side-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 1rem;
+}
+
+#side-menu li {
+    margin: 1rem 0;
+}
+
+#side-menu a {
+    text-decoration: none;
+    color: #0078d7;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: block;
+    padding: 0.5rem 0;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+#side-menu a:hover {
+    text-decoration: underline;
+    background: #f0f4fa;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+#overlay.hidden {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .menu-buttons {
+        flex-direction: row;
+    }
+}
+
+/* Responsive styles for the menu */
+@media (min-width: 768px) {
+    #side-menu {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #f4f4f4;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        border-left: 1px solid #ddd;
+        transform: translateX(0);
+        left: auto;
+    }
+
+    .menu-toggle {
+        display: none;
+    }
+
+    main {
+        margin-right: 250px; /* Adjust main content to leave space for the sidebar */
+    }
+
+    #overlay {
+        display: none !important;
+    }
+
+    header {
+        margin-left: 250px; /* サイドメニューの幅を考慮 */
+        text-align: center;
+    }
+
+    footer {
+        margin-left: 250px; /* サイドメニューの幅を考慮 */
+        text-align: center;
+    }
+
+    main {
+        margin-left: 250px; /* サイドメニューの幅を考慮 */
+    }
+}
+
+@media (max-width: 767px) {
+    #side-menu.hidden {
+        display: none;
+    }
+
+    #side-menu {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 250px;
+        height: 100%;
+        background-color: white;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    }
+
+    #side-menu:not(.hidden) {
+        transform: translateX(0);
+    }
+
+    #overlay.hidden {
+        display: none;
+    }
+
+    #overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10;
+    }
+}
+
+@media (min-width: 768px) {
+    header, footer {
+        width: calc(100% - 250px); /* サイドメニューの幅を引いた残りの幅 */
+        margin-left: 250px; /* サイドメニューの幅 */
+        text-align: center;
+    }
+
+    main {
+        margin-left: 250px; /* サイドメニューの幅 */
+        width: calc(100% - 250px); /* 残りの幅 */
+    }
+}
+
+@media (min-width: 768px) {
+    #side-menu {
+        right: auto; /* PC版では右側に隠れないようにする */
+        left: 0; /* 左側に固定 */
+    }
+}
+
+@media (min-width: 768px) {
+    #side-menu {
+        left: auto; /* 左側固定を解除 */
+        right: 0; /* 右側に固定 */
+    }
+
+    header, footer, main {
+        margin-left: 0; /* 左側の余白を解除 */
+        margin-right: 250px; /* 右側のサイドメニューの幅を考慮 */
+        width: calc(100% - 250px); /* 残りの幅を計算 */
+    }
+}
+
+@media (min-width: 768px) {
+    main, header, footer {
+        margin-right: 250px; /* サイドメニューの幅を考慮 */
+        width: calc(100% - 250px); /* 残りの幅を計算 */
+    }
+
+    #reservation-table, .menu-buttons {
+        max-width: calc(100% - 250px); /* サイドメニューの幅を考慮してテーブルやボタンが隠れないようにする */
+    }
+}
+
+@media (min-width: 768px) {
+    .menu-buttons button {
+        min-width: 120px; /* ボタンが狭くなりすぎないように最小幅を設定 */
+        white-space: nowrap; /* 文字が縦書きにならないようにする */
+    }
+
+    #reservation-form {
+        margin-right: 250px; /* サイドメニューの幅を考慮してフォームが重ならないようにする */
+    }
+}
+
+@media (min-width: 768px) {
+    .menu-toggle {
+        right: 2.5rem;
+    }
+}
+
+#reservation-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 中央揃え */
+    padding: 20px;
+    background-color: #fff; /* 背景を白に設定 */
+    margin: 0 auto; /* 左右均等な余白 */
+    max-width: 600px; /* フォームの最大幅を設定 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 軽い影を追加 */
+    border-radius: 8px; /* 角を丸くする */
+}
+
+#reservation-form label {
+    margin-bottom: 10px;
+    font-size: 1.2rem; /* ラベルの文字サイズを大きく */
+}
+
+#reservation-form input {
+    width: 100%; /* テキストボックスをフォームの幅に合わせる */
+    padding: 10px;
+    font-size: 1.1rem; /* テキストボックスの文字サイズを大きく */
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* パディングを含めた幅を計算 */
+}
+
+#reservation-form button {
+    padding: 10px 20px;
+    font-size: 1.2rem; /* ボタンの文字サイズを大きく */
+    background-color: #0078d7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#reservation-form button:hover {
+    background-color: #005bb5;
+}
+
+@media (min-width: 480px) {
+    .menu-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .menu-button {
+        width: 220px;
+    }
+}
+
+.side-menu-main {
+    padding: 1rem 0 0 0;
+    margin: 0;
+    list-style: none;
+    margin-top: 2rem;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    margin-bottom: 0;
+}
+
+.side-menu-bottom {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: 0;
+    padding-bottom: 1rem;
+    width: 100%;
+    text-align: center;
+    background: inherit;
+    overflow: visible;
+}
+
+@media (max-width: 767px) {
+    .side-menu-bottom {
+        position: static;
+        margin-bottom: 0;
+        margin-top: auto;
+        padding-bottom: 1rem;
+        width: 100%;
+        text-align: center;
+        overflow: visible;
+    }
+    #side-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #fff;
+        border-left: 1px solid #ccc;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+}
+
+/* 管理者用ページ用の赤系テーマ */
+body.admin-page header {
+    background: #b22222; /* 落ち着いた赤（FireBrick） */
+}
+body.admin-page .menu-button,
+body.admin-page .menu-toggle span {
+    background: #b22222;
+}
+body.admin-page .menu-button:hover {
+    background: #8b1a1a;
+}
+body.admin-page #side-menu {
+    border-left: 1px solid #b22222;
+}
+body.admin-page #side-menu a {
+    color: #b22222;
+}
+body.admin-page #side-menu a:hover {
+    color: #fff;
+    background: #b22222;
+}
+body.admin-page .menu-toggle span {
+    background: #fff;
+}
