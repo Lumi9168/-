@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者用ログイン</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>管理者用ログイン</h1>
+    </header>
+    <main>
+        <form id="admin-login-form" class="admin-form">
+            <label for="admin-id">ID:</label>
+            <input type="text" id="admin-id" name="admin-id" required>
+            <label for="admin-password">パスワード:</label>
+            <input type="password" id="admin-password" name="admin-password" required>
+            <button type="submit">ログイン</button>
+        </form>
+        <p id="login-error" style="color:red; display:none; text-align:center;">IDまたはパスワードが違います</p>
+    </main>
+    <footer>
+        <p>&copy; 2025 荷受け予約システム</p>
+    </footer>
+    <script>
+        document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('admin-id').value;
+            const pw = document.getElementById('admin-password').value;
+            // 鹿児島の認証
+            if(id === 'NLkagoshima' && pw === 'NLkagoshima01') {
+                window.location.href = 'admin.html';
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
