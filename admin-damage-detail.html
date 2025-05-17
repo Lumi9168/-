@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>破損品対応 - 内容の追記</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .photo-preview { max-width: 100%; margin-bottom: 1em; }
+        .form-group { margin-bottom: 1em; }
+    </style>
+</head>
+<body class="admin-page">
+    <header>
+        <h1>破損品対応 - 内容の追記</h1>
+    </header>
+    <main>
+        <form id="damage-detail-form">
+            <div class="form-group">
+                <label>写真の追加:</label><br>
+                <img id="photo-preview" class="photo-preview" src="" alt="写真プレビュー" style="display:none;" />
+                <input type="file" accept="image/*" capture="environment" onchange="addPhoto(event)">
+            </div>
+            <div class="form-group">
+                <label for="company">寄託社名:</label>
+                <input type="text" id="company" name="company" required>
+            </div>
+            <div class="form-group">
+                <label for="cases">破損ケース数:</label>
+                <input type="number" id="cases" name="cases" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="product">商品名:</label>
+                <input type="text" id="product" name="product" required>
+            </div>
+            <div class="form-group">
+                <label for="note">備考欄:</label>
+                <textarea id="note" name="note" rows="3"></textarea>
+            </div>
+            <div style="display:flex; gap:1em; flex-wrap:wrap;">
+                <button type="button" onclick="window.history.back()">戻る</button>
+                <button type="button" onclick="sendMail()">メールで送信</button>
+            </div>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2025 荷受け予約システム</p>
+    </footer>
+    <script>
+        // 写真プレビュー表示
+        window.addEventListener('DOMContentLoaded', function() {
+            const photo = sessionStorage.getItem('damagePhoto');
+            if(photo) {
+                const img = document.getElementById('photo-preview');
+                img.src = photo;
+                img.style.display = 'block';
+            }
+        });
+        function addPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photo-preview').src = e.target.result;
+                    document.getElementById('photo-preview').style.display = 'block';
+                    sessionStorage.setItem('damagePhoto', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        function sendMail() {
+            const company = document.getElementById('company').value;
+            const cases = document.getElementById('cases').value;
+            const product = document.getElementById('product').value;
+            const note = document.getElementById('note').value;
+            const photo = sessionStorage.getItem('damagePhoto');
+            if (!photo) {
+                alert('写真を追加してください');
+                return;
+            }
+            const filename = `${company || 'photo'}_${Date.now()}.jpg`;
+            const text = `寄託社名: ${company}\n破損ケース数: ${cases}\n商品名: ${product}\n備考: ${note}`;
+            fetch('/api/sendmail', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, image: photo, filename })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.message) {
+                    alert('メール送信に成功しました');
+                    sessionStorage.removeItem('damagePhoto');
+                    window.location.href = 'admin-damage.html';
+                } else {
+                    alert('メール送信に失敗しました: ' + (data.error || '')); 
+                }
+            })
+            .catch(err => {
+                alert('通信エラー: ' + err.message);
+            });
+        }
+    </script>
+</body>
+</html>

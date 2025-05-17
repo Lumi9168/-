@@ -29,7 +29,12 @@
     <main>
         <section>
             <h2>破損品対応</h2>
-            <p>ここに破損品対応の管理機能を実装します。</p>
+            <div class="menu-buttons">
+                <button class="menu-button" onclick="document.getElementById('camera-input').click()">写真を撮影</button>
+                <button class="menu-button" onclick="document.getElementById('file-input').click()">写真を選択</button>
+                <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="goToDetailPage(event)">
+                <input type="file" id="file-input" accept="image/*" style="display:none" onchange="goToDetailPage(event)">
+            </div>
         </section>
     </main>
     <footer>
@@ -72,6 +77,17 @@
             event.stopPropagation();
             toggleMenu();
         });
+        function goToDetailPage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    sessionStorage.setItem('damagePhoto', e.target.result);
+                    window.location.href = 'admin-damage-detail.html';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
     </script>
 </body>
 </html>
