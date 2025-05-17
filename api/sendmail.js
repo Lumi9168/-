@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { text, image, filename } = req.body;
+  const { text, image, filename, mimeType } = req.body;
 
   if (!text || !image || !filename) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -29,8 +29,9 @@ export default async function handler(req, res) {
   const attachments = [
     {
       filename: filename,
-      content: Buffer.from(image.split(',')[1], 'base64'),
+      content: Buffer.from(image, 'base64'),
       encoding: 'base64',
+      contentType: mimeType || 'image/jpeg',
     },
   ];
 

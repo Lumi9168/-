@@ -78,16 +78,23 @@
                 alert('写真を追加してください');
                 return;
             }
+            // MIMEタイプと拡張子を自動判別
+            const mimeMatch = photo.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/);
+            const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+            let ext = 'jpg';
+            if (mimeType === 'image/heic') ext = 'heic';
+            else if (mimeType === 'image/png') ext = 'png';
+            else if (mimeType === 'image/webp') ext = 'webp';
             // ファイル名は英数字・ハイフン・アンダースコアのみ
             const safeCompany = company.replace(/[^a-zA-Z0-9_-]/g, '') || 'photo';
-            const filename = `${safeCompany}_${Date.now()}.jpg`;
+            const filename = `${safeCompany}_${Date.now()}.${ext}`;
             const text = `寄託社名: ${company}\n破損ケース数: ${cases}\n商品名: ${product}\n備考: ${note}`;
             // Base64部分だけを送信
             const base64 = photo.split(',')[1];
             fetch('/api/sendmail', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, image: base64, filename })
+                body: JSON.stringify({ text, image: base64, filename, mimeType })
             })
             .then(res => res.json())
             .then(data => {
