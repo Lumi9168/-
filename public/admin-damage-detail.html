@@ -96,18 +96,25 @@
             })
             .then(res => res.json())
             .then(data => {
-                // お知らせも追加
-                const info = `寄託社名: ${company}\n破損ケース数: ${cases}\n商品名: ${product}\n備考: ${note}`;
-                const status = data && data.message ? '完了' : '失敗';
-                fetch('/api/notice', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status, info })
-                });
+                if (data.error) {
+                    alert('メール送信失敗: ' + (data.details || data.error));
+                } else {
+                    // お知らせも追加
+                    const info = `寄託社名: ${company}\n破損ケース数: ${cases}\n商品名: ${product}\n備考: ${note}`;
+                    const status = data && data.message ? '完了' : '失敗';
+                    fetch('/api/notice', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status, info })
+                    });
+                    alert('送信処理を開始しました。完了通知はメールでご確認ください。');
+                    sessionStorage.removeItem('damagePhoto');
+                    window.location.href = 'admin-damage.html';
+                }
+            })
+            .catch(err => {
+                alert('メール送信API通信エラー: ' + err.message);
             });
-            alert('送信処理を開始しました。完了通知はメールでご確認ください。');
-            sessionStorage.removeItem('damagePhoto');
-            window.location.href = 'admin-damage.html';
         }
     </script>
 </body>
