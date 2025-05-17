@@ -78,12 +78,16 @@
                 alert('写真を追加してください');
                 return;
             }
-            const filename = `${company || 'photo'}_${Date.now()}.jpg`;
+            // ファイル名は英数字・ハイフン・アンダースコアのみ
+            const safeCompany = company.replace(/[^a-zA-Z0-9_-]/g, '') || 'photo';
+            const filename = `${safeCompany}_${Date.now()}.jpg`;
             const text = `寄託社名: ${company}\n破損ケース数: ${cases}\n商品名: ${product}\n備考: ${note}`;
+            // Base64部分だけを送信
+            const base64 = photo.split(',')[1];
             fetch('/api/sendmail', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, image: photo, filename })
+                body: JSON.stringify({ text, image: base64, filename })
             })
             .then(res => res.json())
             .then(data => {
@@ -92,7 +96,7 @@
                     sessionStorage.removeItem('damagePhoto');
                     window.location.href = 'admin-damage.html';
                 } else {
-                    alert('メール送信に失敗しました: ' + (data.error || '')); 
+                    alert('メール送信に失敗しました: ' + (data.error || ''));
                 }
             })
             .catch(err => {
