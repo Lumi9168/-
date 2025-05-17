@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>破損品対応</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-page">
+    <header>
+        <h1>破損品対応</h1>
+        <div class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav id="side-menu" class="hidden">
+            <ul class="side-menu-main">
+                <li><a href="admin.html">管理者メインメニュー</a></li>
+                <li><a href="admin-reservations.html">現在の予約状況</a></li>
+                <li><a href="admin-damage.html">破損品対応</a></li>
+            </ul>
+            <ul class="side-menu-bottom">
+                <li><a href="index.html">ユーザーメインメニューへ</a></li>
+            </ul>
+        </nav>
+        <div id="overlay" class="hidden" onclick="closeMenu()"></div>
+    </header>
+    <main>
+        <section>
+            <h2>破損品対応</h2>
+            <div class="menu-buttons">
+                <button class="menu-button" onclick="document.getElementById('camera-input').click()">写真を撮影</button>
+                <button class="menu-button" onclick="document.getElementById('file-input').click()">写真を選択</button>
+                <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="goToDetailPage(event)">
+                <input type="file" id="file-input" accept="image/*" style="display:none" onchange="goToDetailPage(event)">
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 荷受け予約システム</p>
+    </footer>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth < 768) {
+                menu.classList.toggle('hidden');
+                overlay.classList.toggle('hidden');
+            }
+        }
+        function closeMenu() {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth < 768) {
+                menu.classList.add('hidden');
+                overlay.classList.add('hidden');
+            }
+        }
+        window.addEventListener('resize', () => {
+            const menu = document.getElementById('side-menu');
+            if (window.innerWidth >= 768) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const menu = document.getElementById('side-menu');
+            if (window.innerWidth >= 768) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        });
+        document.querySelector('.menu-toggle').addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggleMenu();
+        });
+        function goToDetailPage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    sessionStorage.setItem('damagePhoto', e.target.result);
+                    window.location.href = 'admin-damage-detail.html';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>荷受け予約システム</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <h1>荷受け予約システム</h1>
+        <div class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav id="side-menu" class="hidden">
+            <ul class="side-menu-main">
+                <li><a href="#">お問い合わせ</a></li>
+                <li><a href="admin-login.html">管理者用ログイン</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div id="overlay" class="hidden" onclick="closeMenu()"></div>
+    <main>
+        <section id="main-menu">
+            <h2>メインメニュー</h2>
+            <div class="menu-buttons">
+                <a href="current-reservations.html" class="menu-button">現在の予約状況</a>
+                <a href="reservation.html" class="menu-button">予約登録</a>
+                <a href="cancel-reservation.html" class="menu-button">予約取り消し</a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 荷受け予約システム</p>
+    </footer>
+    <script>
+        // URLパラメータから拠点名を取得
+        function getBranch() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('branch') || 'kagoshima';
+        }
+        // 拠点名の表示用マッピング
+        function getBranchDisplayName(branch) {
+            switch(branch) {
+                case 'kagoshima':
+                    return '鹿児島流通センター';
+                // 他拠点を追加する場合はここにcaseを追加
+                default:
+                    return branch;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const branch = getBranch();
+            const header = document.querySelector('header h1');
+            if(header && branch) {
+                // タイトルと拠点名を2行に分けて表示
+                header.innerHTML = `荷受け予約システム<br>（拠点: ${getBranchDisplayName(branch)}）`;
+            }
+            // サイドメニューやリンクの拠点パラメータ引き継ぎ
+            document.querySelectorAll('a').forEach(a => {
+                if(a.href && a.getAttribute('href').endsWith('.html')) {
+                    const url = new URL(a.href, window.location.origin);
+                    url.searchParams.set('branch', branch);
+                    a.href = url.pathname + url.search;
+                }
+            });
+        });
+    </script>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth < 768) { // Only toggle for mobile view
+                menu.classList.toggle('hidden');
+                overlay.classList.toggle('hidden');
+            }
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth < 768) { // Only close for mobile view
+                menu.classList.add('hidden');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // Ensure menu is always visible on larger screens
+        window.addEventListener('resize', () => {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth >= 768) {
+                menu.classList.remove('hidden');
+                console.log('PC版: サイドメニューが表示されました'); // Debug log
+            } else {
+                menu.classList.add('hidden');
+                console.log('スマホ版: サイドメニューが非表示になりました'); // Debug log
+            }
+        });
+
+        // 初期状態の確認
+        document.addEventListener('DOMContentLoaded', () => {
+            const menu = document.getElementById('side-menu');
+            if (window.innerWidth >= 768) {
+                menu.classList.remove('hidden');
+                console.log('初期状態: PC版でサイドメニューが表示されています');
+            } else {
+                menu.classList.add('hidden');
+                console.log('初期状態: スマホ版でサイドメニューが非表示です');
+            }
+        });
+
+        document.querySelector('.menu-toggle').addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent event bubbling
+            console.log('toggleMenu called'); // Debug log
+            toggleMenu();
+        });
+    </script>
+</body>
+</html>

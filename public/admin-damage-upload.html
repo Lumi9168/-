@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>破損品対応 - 写真アップロード</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-page">
+    <header>
+        <h1>破損品対応 - 写真アップロード</h1>
+    </header>
+    <main>
+        <div class="upload-buttons">
+            <button onclick="document.getElementById('file-input').click()">写真を送信（アルバムから選択）</button>
+            <button onclick="document.getElementById('camera-input').click()">写真を撮影</button>
+            <input type="file" id="file-input" accept="image/*" style="display:none" onchange="goToDetailPage(event)">
+            <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="goToDetailPage(event)">
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 荷受け予約システム</p>
+    </footer>
+    <script>
+        function goToDetailPage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // ファイルを一時保存（localStorageやsessionStorageなど）
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    sessionStorage.setItem('damagePhoto', e.target.result);
+                    window.location.href = 'admin-damage-detail.html';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
