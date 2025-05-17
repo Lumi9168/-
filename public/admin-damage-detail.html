@@ -42,6 +42,7 @@
                 <button type="button" onclick="sendMail()">メールで送信</button>
             </div>
         </form>
+        <div id="sending-indicator" style="display:none; color: #007bff; font-weight: bold; margin-top: 1em;">送信中です。しばらくお待ちください...</div>
     </main>
     <footer>
         <p>&copy; 2025 荷受け予約システム</p>
@@ -88,6 +89,7 @@
             const filename = `${safeCompany}_${Date.now()}.${ext}`;
             const text = `寄託社名: ${company}\n破損ケース数: ${cases}\n商品名: ${product}\n備考: ${note}`;
             const base64 = photo.split(',')[1];
+            document.getElementById('sending-indicator').style.display = 'block';
             // 非同期で送信し、即時完了通知
             fetch('/api/sendmail', {
                 method: 'POST',
@@ -96,6 +98,7 @@
             })
             .then(res => res.json())
             .then(data => {
+                document.getElementById('sending-indicator').style.display = 'none';
                 if (data.error) {
                     alert('メール送信失敗: ' + (data.details || data.error));
                 } else {
@@ -105,6 +108,7 @@
                 }
             })
             .catch(err => {
+                document.getElementById('sending-indicator').style.display = 'none';
                 alert('メール送信API通信エラー: ' + err.message);
             });
         }
