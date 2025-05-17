@@ -92,22 +92,14 @@
             fetch('/api/sendmail', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, image: base64, filename, mimeType })
+                body: JSON.stringify({ text, image: base64, filename, mimeType, company, cases, product, note })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
                     alert('メール送信失敗: ' + (data.details || data.error));
                 } else {
-                    // お知らせも追加
-                    const info = `寄託社名: ${company}\n破損ケース数: ${cases}\n商品名: ${product}\n備考: ${note}`;
-                    const status = data && data.message ? '完了' : '失敗';
-                    fetch('/api/notice', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ status, info })
-                    });
-                    alert('送信処理を開始しました。完了通知はメールでご確認ください。');
+                    alert('受付完了しました。メール送信・掲示板反映は裏で処理されます。');
                     sessionStorage.removeItem('damagePhoto');
                     window.location.href = 'admin-damage.html';
                 }
