@@ -45,6 +45,7 @@ export default async function handler(req, res) {
     });
     res.status(200).json({ message: 'メール送信成功' });
   } catch (error) {
+    console.error('メール送信APIエラー:', error); // エラー内容をVercelログに出力
     res.status(500).json({ error: 'メール送信失敗', details: error.message });
   }
 }
