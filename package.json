@@ -1,0 +1,10 @@
+{
+  "name": "nyuuke-yoyaku-system",
+  "version": "1.0.0",
+  "description": "荷受け予約システムのメール送信API用package.json",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "nodemailer": "^6.9.8"
+  }
+}

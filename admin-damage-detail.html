@@ -103,7 +103,9 @@
                     sessionStorage.removeItem('damagePhoto');
                     window.location.href = 'admin-damage.html';
                 } else {
-                    alert('メール送信に失敗しました: ' + (data.error || ''));
+                    let msg = 'メール送信に失敗しました: ' + (data.error || '');
+                    if (data.details) msg += '\n詳細: ' + data.details;
+                    alert(msg);
                 }
             })
             .catch(err => {
