@@ -1,6 +1,6 @@
 // 管理者ログインAPI（Vercel Functions用）
 // 鹿児島の認証ID/PWをサーバー側で管理
-const users = [
+let users = [
   { id: 'NLkagoshima', password: 'NLkagoshima01' }
 ];
 
@@ -16,4 +16,11 @@ export default function handler(req, res) {
   } else {
     res.status(401).json({ success: false, message: 'IDまたはパスワードが違います' });
   }
+}
+
+// 管理者ユーザー追加・削除・パスワード変更用API（簡易実装例）
+// 本番は認証・権限チェック必須
+export function updateUsers(newUsers) {
+  users.length = 0;
+  for (const u of newUsers) users.push(u);
 }

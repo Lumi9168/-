@@ -62,6 +62,10 @@
         });
         return false;
     }
+    // すでにログイン済みなら管理画面へリダイレクト
+    if (localStorage.getItem('admin_token')) {
+        window.location.href = 'admin.html';
+    }
     </script>
 </body>
 </html>

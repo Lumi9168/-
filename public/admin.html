@@ -9,6 +9,7 @@
 <body class="admin-page">
     <header>
         <h1>管理者用メインメニュー</h1>
+        <button id="logout-btn" style="float:right; margin:1em;">ログアウト</button>
         <div class="menu-toggle">
             <span></span>
             <span></span>
@@ -104,6 +105,15 @@
                     }
                 });
         }
+        // 管理者認証チェック
+        if (!localStorage.getItem('admin_token')) {
+            window.location.href = 'admin-login.html';
+        }
+        // ログアウト処理
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            localStorage.removeItem('admin_token');
+            window.location.href = 'admin-login.html';
+        });
     </script>
 </body>
 </html>
