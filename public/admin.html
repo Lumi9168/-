@@ -55,12 +55,16 @@
                     document.body.style.overflow = '';
                     document.body.style.position = '';
                     document.body.style.width = '';
+                    document.documentElement.style.overflow = '';
+                    document.documentElement.style.height = '';
                 } else {
                     menu.classList.remove('hidden');
                     overlay.classList.remove('hidden');
                     document.body.style.overflow = 'hidden';
                     document.body.style.position = 'fixed';
                     document.body.style.width = '100vw';
+                    document.documentElement.style.overflow = 'hidden';
+                    document.documentElement.style.height = '100vh';
                 }
             }
         }
@@ -73,8 +77,12 @@
                 document.body.style.overflow = '';
                 document.body.style.position = '';
                 document.body.style.width = '';
+                document.documentElement.style.overflow = '';
+                document.documentElement.style.height = '';
             }
         }
+        // オーバーレイをタップしたら必ずメニューを閉じる
+        document.getElementById('overlay').addEventListener('click', closeMenu);
         // スクロール時にメニューが閉じないようにwindow.onscrollを無効化
         window.onscroll = function() {
             const menu = document.getElementById('side-menu');
