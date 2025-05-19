@@ -5,36 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理者用ログイン</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-form { max-width: 350px; margin: 2em auto; padding: 2em; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
+        .login-form label { display: block; margin-top: 1em; }
+        .login-form input { width: 100%; padding: 0.5em; margin-top: 0.2em; }
+        .login-form button { margin-top: 1.5em; width: 100%; padding: 0.7em; }
+        #login-message { margin-top: 1em; text-align: center; font-weight: bold; }
+    </style>
 </head>
 <body>
     <header>
         <h1>管理者用ログイン</h1>
     </header>
     <main>
-        <form id="admin-login-form" class="admin-form">
+        <form class="login-form" id="admin-login-form" onsubmit="return login(event)">
             <label for="admin-id">ID:</label>
-            <input type="text" id="admin-id" name="admin-id" required>
+            <input type="text" id="admin-id" name="admin-id" required autocomplete="username">
             <label for="admin-password">パスワード:</label>
-            <input type="password" id="admin-password" name="admin-password" required>
+            <input type="password" id="admin-password" name="admin-password" required autocomplete="current-password">
             <button type="submit">ログイン</button>
+            <div id="login-message"></div>
         </form>
-        <p id="login-error" style="color:red; display:none; text-align:center;">IDまたはパスワードが違います</p>
     </main>
     <footer>
         <p>&copy; 2025 荷受け予約システム</p>
     </footer>
     <script>
-        document.getElementById('admin-login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = document.getElementById('admin-id').value;
-            const pw = document.getElementById('admin-password').value;
-            // 鹿児島の認証
-            if(id === 'NLkagoshima' && pw === 'NLkagoshima01') {
-                window.location.href = 'admin.html';
+    function login(event) {
+        event.preventDefault();
+        const id = document.getElementById('admin-id').value;
+        const password = document.getElementById('admin-password').value;
+        const msg = document.getElementById('login-message');
+        msg.textContent = 'ログイン中...';
+        msg.style.color = '#007bff';
+        fetch('/api/admin-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, password })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                msg.textContent = 'ログイン成功！管理画面に移動します...';
+                msg.style.color = 'green';
+                // ローカルストレージにトークン保存（本番はCookie推奨）
+                localStorage.setItem('admin_token', data.token);
+                setTimeout(() => { window.location.href = 'admin.html'; }, 1200);
             } else {
-                document.getElementById('login-error').style.display = 'block';
+                msg.textContent = data.message || 'ログイン失敗';
+                msg.style.color = 'red';
             }
+        })
+        .catch(err => {
+            msg.textContent = '通信エラー: ' + err.message;
+            msg.style.color = 'red';
         });
+        return false;
+    }
     </script>
 </body>
 </html>
