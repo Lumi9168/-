@@ -48,13 +48,15 @@
             const menu = document.getElementById('side-menu');
             const overlay = document.getElementById('overlay');
             if (window.innerWidth < 768) {
-                menu.classList.toggle('hidden');
-                overlay.classList.toggle('hidden');
-                // bodyのoverflow制御
-                if (!menu.classList.contains('hidden')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
+                const isOpen = !menu.classList.contains('hidden');
+                if (isOpen) {
+                    menu.classList.add('hidden');
+                    overlay.classList.add('hidden');
                     document.body.style.overflow = '';
+                } else {
+                    menu.classList.remove('hidden');
+                    overlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
                 }
             }
         }
@@ -67,6 +69,14 @@
                 document.body.style.overflow = '';
             }
         }
+        // スクロール時にメニューが閉じないようにwindow.onscrollを無効化
+        window.onscroll = function() {
+            const menu = document.getElementById('side-menu');
+            if (window.innerWidth < 768 && !menu.classList.contains('hidden')) {
+                // スクロールしてもメニューが閉じないようにする
+                window.scrollTo(0, 0);
+            }
+        };
         window.addEventListener('resize', () => {
             const menu = document.getElementById('side-menu');
             if (window.innerWidth >= 768) {
