@@ -1,8 +1,7 @@
 // 管理者ログインAPI（Vercel Functions用）
-// ユーザーID・パスワードはここで管理（本番は環境変数やDB推奨）
+// 鹿児島の認証ID/PWをサーバー側で管理
 const users = [
-  { id: 'admin1', password: 'pass1' },
-  { id: 'admin2', password: 'pass2' }
+  { id: 'NLkagoshima', password: 'NLkagoshima01' }
 ];
 
 export default function handler(req, res) {
