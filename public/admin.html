@@ -53,10 +53,14 @@
                     menu.classList.add('hidden');
                     overlay.classList.add('hidden');
                     document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
                 } else {
                     menu.classList.remove('hidden');
                     overlay.classList.remove('hidden');
                     document.body.style.overflow = 'hidden';
+                    document.body.style.position = 'fixed';
+                    document.body.style.width = '100vw';
                 }
             }
         }
@@ -67,6 +71,8 @@
                 menu.classList.add('hidden');
                 overlay.classList.add('hidden');
                 document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
             }
         }
         // スクロール時にメニューが閉じないようにwindow.onscrollを無効化

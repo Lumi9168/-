@@ -300,39 +300,35 @@ footer {
     #side-menu {
         display: flex;
         flex-direction: column;
-        height: 100vh;
-        min-height: 100vh;
-        justify-content: flex-start;
         position: absolute;
         top: 0;
         right: 0;
         left: auto;
         width: 80vw;
         max-width: 320px;
+        height: 100vh;
+        min-height: 100vh;
         background: #fff;
         z-index: 1001;
-        transition: none;
+        overflow: hidden;
+    }
+    .side-menu-main {
+        flex: 1 1 auto;
         overflow-y: auto;
+        min-height: 0;
     }
-    #side-menu.hidden {
-        display: none;
-    }
-    #overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0,0,0,0.4);
-        z-index: 1000;
-        display: block;
-        transition: none;
-    }
-    #overlay.hidden {
-        display: none;
+    .side-menu-bottom {
+        flex-shrink: 0;
+        width: 100%;
+        background: #fff;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        padding-bottom: 1.2em;
+        position: relative;
     }
     body.admin-page, body.user-page {
         overflow: hidden !important;
+        position: fixed;
+        width: 100vw;
     }
 }
 
