@@ -50,6 +50,12 @@
             if (window.innerWidth < 768) {
                 menu.classList.toggle('hidden');
                 overlay.classList.toggle('hidden');
+                // bodyのoverflow制御
+                if (!menu.classList.contains('hidden')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
             }
         }
         function closeMenu() {
@@ -58,22 +64,27 @@
             if (window.innerWidth < 768) {
                 menu.classList.add('hidden');
                 overlay.classList.add('hidden');
+                document.body.style.overflow = '';
             }
         }
         window.addEventListener('resize', () => {
             const menu = document.getElementById('side-menu');
             if (window.innerWidth >= 768) {
                 menu.classList.remove('hidden');
+                document.body.style.overflow = '';
             } else {
                 menu.classList.add('hidden');
+                document.body.style.overflow = '';
             }
         });
         document.addEventListener('DOMContentLoaded', () => {
             const menu = document.getElementById('side-menu');
             if (window.innerWidth >= 768) {
                 menu.classList.remove('hidden');
+                document.body.style.overflow = '';
             } else {
                 menu.classList.add('hidden');
+                document.body.style.overflow = '';
             }
         });
         document.querySelector('.menu-toggle').addEventListener('click', (event) => {
