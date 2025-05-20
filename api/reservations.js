@@ -5,15 +5,15 @@ const redis = Redis.fromEnv();
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     // 新規予約登録
-    const { date, driverName, companyName, phoneNumber } = req.body;
-    if (!date || !driverName || !phoneNumber) {
+    const { date, driverName, companyName, phoneNumber, cargoSummary } = req.body;
+    if (!date || !driverName || !phoneNumber || !cargoSummary) {
       return res.status(400).json({ error: '必須項目が不足しています' });
     }
     let reservations = (await redis.get('reservations')) || [];
     if (typeof reservations === 'string') {
       try { reservations = JSON.parse(reservations); } catch { reservations = []; }
     }
-    reservations.push({ date, driverName, companyName, phoneNumber });
+    reservations.push({ date, driverName, companyName, phoneNumber, cargoSummary });
     await redis.set('reservations', JSON.stringify(reservations));
     return res.status(200).json({ message: '予約登録完了' });
   } else if (req.method === 'GET') {

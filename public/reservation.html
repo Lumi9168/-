@@ -38,6 +38,8 @@
                 <input type="text" id="company-name" name="company-name">
                 <label for="phone-number">電話番号:</label>
                 <input type="tel" id="phone-number" name="phone-number" pattern="\d{10,11}" placeholder="例: 09012345678" required>
+                <label for="cargo-summary">荷物の概要:</label>
+                <textarea id="cargo-summary" name="cargo-summary" rows="2" required placeholder="例: 段ボール10箱、精密機器など"></textarea>
                 <button type="submit">予約する</button>
             </form>
         </section>
@@ -100,7 +102,8 @@
                 date: dateField.value,
                 driverName: document.getElementById('driver-name').value,
                 companyName: document.getElementById('company-name').value,
-                phoneNumber: document.getElementById('phone-number').value
+                phoneNumber: document.getElementById('phone-number').value,
+                cargoSummary: document.getElementById('cargo-summary').value
             };
 
             // APIへPOST

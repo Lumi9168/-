@@ -88,11 +88,13 @@
                 }
                 // 先頭予約を大きく表示
                 const first = reservations[0];
-                let html = `<div style="border:2px solid #b22222;padding:1em;margin-bottom:1em;background:#fff8f8;">
+                let html = `<div style="border:2px solid #b22222;padding:1em;margin-bottom:1em;background:#fff8f8;position:relative;">
+                    <button id="skip-btn" style="position:absolute;top:10px;right:10px;background:#ff9800;color:#fff;border:none;border-radius:5px;padding:0.4em 1em;cursor:pointer;">スキップ</button>
                     <strong>【呼出対象】</strong><br>
                     日付: ${first.date || ''}<br>
                     会社名: ${first.companyName || ''}<br>
                     ドライバー名: ${first.driverName || ''}<br>
+                    荷物の概要: <span style="color:#333;">${first.cargoSummary || ''}</span><br>
                     電話番号: ${first.phoneNumber || ''}<br>
                     <button id="call-btn" class="menu-button" style="margin-top:1em;display:inline-block;">呼出</button>
                 </div>`;
@@ -118,6 +120,26 @@
                             alert('この機能はスマートフォンでご利用ください。');
                         }
                     };
+                }
+                // スキップボタン機能
+                const skipBtn = document.getElementById('skip-btn');
+                if (skipBtn && reservations.length > 1) {
+                    skipBtn.onclick = async function() {
+                        // 先頭予約を2番目に、2番目を先頭に
+                        const newList = [reservations[1], reservations[0], ...reservations.slice(2)];
+                        try {
+                            await fetch('/api/reservations', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ reservations: newList })
+                            });
+                            loadReservations();
+                        } catch (e) {
+                            alert('スキップ処理に失敗しました');
+                        }
+                    };
+                } else if (skipBtn) {
+                    skipBtn.disabled = true;
                 }
             } catch (e) {
                 section.innerHTML = '<p style="color:red;">予約情報の取得に失敗しました</p>';

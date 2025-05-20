@@ -33,20 +33,9 @@
         </section>
         <section id="reservations">
             <h2>予約一覧</h2>
-            <table id="reservation-table">
-                <thead>
-                    <tr>
-                        <th>番号</th>
-                        <th>会社名</th>
-                        <th>ドライバー名</th>
-                    </tr>
-                </thead>
-                <tbody id="reservation-list">
-                    <tr>
-                        <td colspan="3">現在の登録はありません</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="reservation-list">
+                <div style="padding:1.5em;text-align:center;color:#888;">現在の登録はありません</div>
+            </div>
         </section>
     </main>
     <footer>
@@ -108,18 +97,19 @@
                 const reservations = (data.reservations || []);
                 const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
                 if (filteredReservations.length === 0) {
-                    reservationList.innerHTML = '<tr><td colspan="3">現在の登録はありません</td></tr>';
+                    reservationList.innerHTML = '<div style="padding:1.5em;text-align:center;color:#888;">現在の登録はありません</div>';
                 } else {
                     reservationList.innerHTML = filteredReservations.map((reservation, index) => `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${reservation.companyName}</td>
-                            <td>${reservation.driverName}</td>
-                        </tr>
+                        <div class="reservation-card" style="background:#fff;border-radius:10px;box-shadow:0 2px 8px #e0e0e0;padding:1.2em;margin-bottom:1.2em;">
+                            <div style="font-weight:bold;font-size:1.1em;color:#0078d7;">${index + 1}. ${reservation.companyName || ''}</div>
+                            <div style="margin-top:0.3em;">ドライバー名: <span style="font-weight:bold;">${reservation.driverName}</span></div>
+                            <div style="margin-top:0.3em;">荷物の概要: <span style="color:#333;">${reservation.cargoSummary || ''}</span></div>
+                            <div style="margin-top:0.3em;font-size:0.95em;color:#666;">電話番号: ${reservation.phoneNumber}</div>
+                        </div>
                     `).join('');
                 }
             } catch (e) {
-                reservationList.innerHTML = '<tr><td colspan="3" style="color:red;">予約情報の取得に失敗しました</td></tr>';
+                reservationList.innerHTML = '<div style="color:red;">予約情報の取得に失敗しました</div>';
             }
         }
 
