@@ -96,7 +96,7 @@
                     ドライバー名: ${first.driverName || ''}<br>
                     荷物の概要: <span style="color:#333;">${first.cargoSummary || ''}</span><br>
                     電話番号: ${first.phoneNumber || ''}<br>
-                    <button id="call-btn" class="menu-button" style="margin-top:1em;display:inline-block;">呼出</button>
+                    <div id="call-btn-area" style="display:flex;gap:1em;margin-top:1em;"></div>
                 </div>`;
                 // 2件目以降
                 if (reservations.length > 1) {
