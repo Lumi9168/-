@@ -115,9 +115,8 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    alert('予約が完了しました');
-                    form.reset();
-                    dateField.value = `${year}-${month}-${day}`;
+                    window.location.href = 'current-reservations.html';
+                    return;
                 } else {
                     alert('予約登録に失敗しました: ' + (data.error || 'エラー'));
                 }
