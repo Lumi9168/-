@@ -63,7 +63,7 @@
         return false;
     }
     // すでにログイン済みなら管理画面へリダイレクト
-    if (localStorage.getItem('admin_token')) {
+    if (localStorage.getItem('admin_token') && localStorage.getItem('admin_branch')) {
         window.location.href = 'admin.html';
     }
     </script>
