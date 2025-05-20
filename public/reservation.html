@@ -92,7 +92,7 @@
 
         // フォーム送信時の処理
         const form = document.getElementById('reservation-form');
-        form.addEventListener('submit', (event) => {
+        form.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             // 入力データを取得
@@ -103,17 +103,24 @@
                 phoneNumber: document.getElementById('phone-number').value
             };
 
-            // ローカルストレージに保存
-            const reservations = JSON.parse(localStorage.getItem('reservations')) || [];
-            reservations.push(reservation);
-            localStorage.setItem('reservations', JSON.stringify(reservations));
-
-            // ポップアップで予約完了メッセージを表示
-            alert('予約が完了しました');
-
-            // フォームをリセット
-            form.reset();
-            dateField.value = `${year}-${month}-${day}`;
+            // APIへPOST
+            try {
+                const res = await fetch('/api/reservations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reservation)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('予約が完了しました');
+                    form.reset();
+                    dateField.value = `${year}-${month}-${day}`;
+                } else {
+                    alert('予約登録に失敗しました: ' + (data.error || 'エラー'));
+                }
+            } catch (e) {
+                alert('API通信エラー: ' + e.message);
+            }
         });
 
         function toggleMenu() {
