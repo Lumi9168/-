@@ -73,31 +73,52 @@
         // 予約情報を取得して表示
         const reservationList = document.getElementById('reservation-list');
 
-        function updateReservations() {
+        async function updateReservations() {
             const selectedDate = dateField.value;
-            const reservations = JSON.parse(localStorage.getItem('reservations')) || [];
-            const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
-
-            if (filteredReservations.length === 0) {
-                reservationList.innerHTML = '<tr><td colspan="4">現在の登録はありません</td></tr>';
-            } else {
-                reservationList.innerHTML = filteredReservations.map((reservation, index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${reservation.companyName}</td>
-                        <td>${reservation.driverName}</td>
-                        <td><button onclick="deleteReservation(${index}, '${selectedDate}')">削除</button></td>
-                    </tr>
-                `).join('');
+            try {
+                const res = await fetch('/api/reservations');
+                const data = await res.json();
+                const reservations = (data.reservations || []);
+                const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
+                if (filteredReservations.length === 0) {
+                    reservationList.innerHTML = '<div style="padding:1.5em;text-align:center;color:#888;">現在の登録はありません</div>';
+                } else {
+                    reservationList.innerHTML = filteredReservations.map((reservation, index) => `
+                        <div class="reservation-card" style="background:#fff;border-radius:10px;box-shadow:0 2px 8px #e0e0e0;padding:1.2em;margin-bottom:1.2em;display:flex;align-items:center;justify-content:space-between;">
+                            <div>
+                                <div style="font-weight:bold;font-size:1.1em;color:#0078d7;">${index + 1}. ${reservation.companyName || ''}</div>
+                                <div style="margin-top:0.3em;">ドライバー名: <span style="font-weight:bold;">${reservation.driverName}</span></div>
+                            </div>
+                            <button onclick="deleteReservation(${index}, '${selectedDate}')" style="background:#b22222;color:#fff;border:none;border-radius:5px;padding:0.5em 1.2em;cursor:pointer;">削除</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                reservationList.innerHTML = '<div style="color:red;">予約情報の取得に失敗しました</div>';
             }
         }
 
-        function deleteReservation(index, date) {
-            const reservations = JSON.parse(localStorage.getItem('reservations')) || [];
-            const filteredReservations = reservations.filter(reservation => reservation.date !== date || reservations.indexOf(reservation) !== index);
-            localStorage.setItem('reservations', JSON.stringify(filteredReservations));
-            alert('予約を削除しました');
-            updateReservations();
+        async function deleteReservation(index, date) {
+            try {
+                const res = await fetch('/api/reservations');
+                const data = await res.json();
+                let reservations = (data.reservations || []);
+                const filteredReservations = reservations.filter(reservation => reservation.date === date);
+                if (!filteredReservations[index]) return;
+                if (!confirm('本当にこの予約を削除しますか？')) return;
+                // 削除対象を除外した新リストを作成
+                const toDelete = filteredReservations[index];
+                const newList = reservations.filter(r => r !== toDelete);
+                await fetch('/api/reservations', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reservations: newList })
+                });
+                alert('予約を削除しました');
+                updateReservations();
+            } catch (e) {
+                alert('削除に失敗しました');
+            }
         }
 
         // 日付変更時に予約情報を更新

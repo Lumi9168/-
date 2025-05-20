@@ -28,6 +28,7 @@
             <h2>メインメニュー</h2>
             <div class="menu-buttons">
                 <a href="current-reservations.html" class="menu-button">現在の予約状況</a>
+                <div id="today-reservation-count" style="margin-bottom:1em;color:#0078d7;font-weight:bold;"></div>
                 <a href="reservation.html" class="menu-button">予約登録</a>
                 <a href="cancel-reservation.html" class="menu-button">予約取り消し</a>
             </div>
@@ -67,6 +68,23 @@
                     a.href = url.pathname + url.search;
                 }
             });
+            // 予約件数表示
+            fetch('/api/reservations')
+                .then(res => res.json())
+                .then(data => {
+                    const reservations = (data.reservations || []);
+                    if (reservations.length === 0) return;
+                    // 最短日付を取得
+                    const dates = reservations.map(r => r.date).filter(Boolean);
+                    if (dates.length === 0) return;
+                    dates.sort();
+                    const minDate = dates[0];
+                    const count = reservations.filter(r => r.date === minDate).length;
+                    const div = document.getElementById('today-reservation-count');
+                    if (div) {
+                        div.textContent = `（${minDate}の予約数：${count}件）`;
+                    }
+                });
         });
     </script>
     <script>
