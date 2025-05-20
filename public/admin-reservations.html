@@ -112,20 +112,72 @@
                     }
                     html += '</div>';
                 }
-                section.innerHTML = html;
                 // 呼出ボタンでSMS送信
-                const callBtn = document.getElementById('call-btn');
-                if (callBtn && first.phoneNumber) {
-                    callBtn.onclick = function(e) {
-                        const smsBody = encodeURIComponent('お呼び出しです。順番になりましたので受付までお越しください。');
-                        const smsUrl = `sms:${first.phoneNumber}?body=${smsBody}`;
-                        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                            window.location.href = smsUrl;
-                        } else {
-                            alert('この機能はスマートフォンでご利用ください。');
-                        }
-                    };
+                let callState = 'call'; // 状態管理: 'call', 'after-call'
+                function renderCallButtons() {
+                    const btnArea = document.getElementById('call-btn-area');
+                    if (!btnArea) return;
+                    btnArea.innerHTML = '';
+                    if (callState === 'call') {
+                        const callBtn = document.createElement('button');
+                        callBtn.id = 'call-btn';
+                        callBtn.className = 'menu-button';
+                        callBtn.style.marginTop = '1em';
+                        callBtn.textContent = '呼出';
+                        callBtn.onclick = function() {
+                            const smsBody = encodeURIComponent('お呼び出しです。順番になりましたので受付までお越しください。');
+                            const smsUrl = `sms:${first.phoneNumber}?body=${smsBody}`;
+                            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                                callState = 'after-call';
+                                renderCallButtons();
+                                setTimeout(() => { window.location.href = smsUrl; }, 100);
+                            } else {
+                                alert('この機能はスマートフォンでご利用ください。');
+                            }
+                        };
+                        btnArea.appendChild(callBtn);
+                    } else if (callState === 'after-call') {
+                        const recallBtn = document.createElement('button');
+                        recallBtn.className = 'menu-button';
+                        recallBtn.style.marginTop = '1em';
+                        recallBtn.textContent = '再呼出';
+                        recallBtn.onclick = function() {
+                            const smsBody = encodeURIComponent('お呼び出しです。順番になりましたので受付までお越しください。');
+                            const smsUrl = `sms:${first.phoneNumber}?body=${smsBody}`;
+                            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                                setTimeout(() => { window.location.href = smsUrl; }, 100);
+                            } else {
+                                alert('この機能はスマートフォンでご利用ください。');
+                            }
+                        };
+                        const doneBtn = document.createElement('button');
+                        doneBtn.className = 'menu-button';
+                        doneBtn.style.marginTop = '1em';
+                        doneBtn.style.marginLeft = '1em';
+                        doneBtn.textContent = '完了';
+                        doneBtn.onclick = async function() {
+                            // 先頭予約を削除
+                            const newList = reservations.slice(1);
+                            try {
+                                await fetch('/api/reservations', {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ reservations: newList })
+                                });
+                                callState = 'call';
+                                loadReservations();
+                            } catch (e) {
+                                alert('完了処理に失敗しました');
+                            }
+                        };
+                        btnArea.appendChild(recallBtn);
+                        btnArea.appendChild(doneBtn);
+                    }
                 }
+                // 呼出ボタンエリアを設置
+                html += '<div id="call-btn-area"></div>';
+                section.innerHTML = html;
+                renderCallButtons();
                 // スキップボタン機能
                 const skipBtn = document.getElementById('skip-btn');
                 if (skipBtn && reservations.length > 1) {
@@ -138,6 +190,7 @@
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ reservations: newList })
                             });
+                            callState = 'call';
                             loadReservations();
                         } catch (e) {
                             alert('スキップ処理に失敗しました');
