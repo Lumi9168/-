@@ -81,11 +81,24 @@
         let allReservations = [];
         let selectedDate = '';
 
+        document.addEventListener('DOMContentLoaded', function() {
+            // 拠点名表示
+            const branch = localStorage.getItem('admin_branch') || 'kagoshima';
+            const header = document.querySelector('header h1');
+            if(header) header.innerHTML = `現在の予約状況<br>（拠点: ${branch === 'kagoshima' ? '鹿児島' : branch}）`;
+        });
+
+        // 認証・branchチェック
+        if (!localStorage.getItem('admin_token') || !localStorage.getItem('admin_branch')) {
+            window.location.href = 'admin-login.html';
+        }
+
         async function loadReservations() {
+            const branch = localStorage.getItem('admin_branch') || 'kagoshima';
             const section = document.getElementById('reservation-section');
             section.innerHTML = '<p>読み込み中...</p>';
             try {
-                const res = await fetch('/api/reservations');
+                const res = await fetch(`/api/reservations?branch=${encodeURIComponent(branch)}`);
                 const data = await res.json();
                 allReservations = (data.reservations || []);
                 // 日付リストを抽出

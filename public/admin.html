@@ -140,8 +140,14 @@
                     }
                 });
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            // 拠点名表示
+            const branch = localStorage.getItem('admin_branch') || 'kagoshima';
+            const header = document.querySelector('header h1');
+            if(header) header.innerHTML = `管理者用メインメニュー<br>（拠点: ${branch === 'kagoshima' ? '鹿児島' : branch}）`;
+        });
         // 管理者認証チェック
-        if (!localStorage.getItem('admin_token')) {
+        if (!localStorage.getItem('admin_token') || !localStorage.getItem('admin_branch')) {
             window.location.href = 'admin-login.html';
         }
         // ログアウト処理

@@ -1,7 +1,7 @@
 // 管理者ログインAPI（Vercel Functions用）
 // 鹿児島の認証ID/PWをサーバー側で管理
 let users = [
-  { id: 'NLkagoshima', password: 'NLkagoshima01' }
+  { id: 'NLkagoshima', password: 'NLkagoshima01', branch: 'kagoshima' }
 ];
 
 export default function handler(req, res) {
@@ -11,8 +11,8 @@ export default function handler(req, res) {
   const { id, password } = req.body;
   const found = users.find(u => u.id === id && u.password === password);
   if (found) {
-    // 認証OK: セッション用の簡易トークンを返す（本番はJWT推奨）
-    res.status(200).json({ success: true, token: 'dummy-token', user: id });
+    // 認証OK: branchも返す
+    res.status(200).json({ success: true, token: 'dummy-token', user: id, branch: found.branch });
   } else {
     res.status(401).json({ success: false, message: 'IDまたはパスワードが違います' });
   }

@@ -48,8 +48,8 @@
             if (data.success) {
                 msg.textContent = 'ログイン成功！管理画面に移動します...';
                 msg.style.color = 'green';
-                // ローカルストレージにトークン保存（本番はCookie推奨）
                 localStorage.setItem('admin_token', data.token);
+                localStorage.setItem('admin_branch', data.branch || 'kagoshima');
                 setTimeout(() => { window.location.href = 'admin.html'; }, 1200);
             } else {
                 msg.textContent = data.message || 'ログイン失敗';
