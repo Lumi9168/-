@@ -88,7 +88,7 @@
                 }
                 // 先頭予約を大きく表示
                 const first = reservations[0];
-                let html = `<div style="border:2px solid #b22222;padding:1em;margin-bottom:1em;background:#fff8f8;position:relative;">
+                let html = `<div style="border:2px solid #b22222;padding:1em;margin-bottom:1em;background:#fff8f8;position:relative;max-width:420px;">
                     <button id="skip-btn" style="position:absolute;top:10px;right:10px;background:#ff9800;color:#fff;border:none;border-radius:5px;padding:0.4em 1em;cursor:pointer;">スキップ</button>
                     <strong>【呼出対象】</strong><br>
                     日付: ${first.date || ''}<br>
@@ -96,7 +96,7 @@
                     ドライバー名: ${first.driverName || ''}<br>
                     荷物の概要: <span style="color:#333;">${first.cargoSummary || ''}</span><br>
                     電話番号: ${first.phoneNumber || ''}<br>
-                    <div id="call-btn-area" style="display:flex;gap:1em;margin-top:1em;"></div>
+                    <div id="call-btn-area" style="display:flex;gap:0.7em;margin-top:1em;flex-wrap:wrap;"></div>
                 </div>`;
                 // 2件目以降
                 if (reservations.length > 1) {
@@ -118,11 +118,12 @@
                     const btnArea = document.getElementById('call-btn-area');
                     if (!btnArea) return;
                     btnArea.innerHTML = '';
+                    const btnStyle = 'min-width:80px;max-width:120px;padding:0.5em 0.7em;font-size:1em;flex:1 1 40%;box-sizing:border-box;';
                     if (callState === 'call') {
                         const callBtn = document.createElement('button');
                         callBtn.id = 'call-btn';
                         callBtn.className = 'menu-button';
-                        callBtn.style.marginTop = '1em';
+                        callBtn.style.cssText = btnStyle;
                         callBtn.textContent = '呼出';
                         callBtn.onclick = function() {
                             const smsBody = encodeURIComponent('お呼び出しです。順番になりましたので受付までお越しください。');
@@ -139,7 +140,7 @@
                     } else if (callState === 'after-call') {
                         const recallBtn = document.createElement('button');
                         recallBtn.className = 'menu-button';
-                        recallBtn.style.marginTop = '1em';
+                        recallBtn.style.cssText = btnStyle;
                         recallBtn.textContent = '再呼出';
                         recallBtn.onclick = function() {
                             const smsBody = encodeURIComponent('お呼び出しです。順番になりましたので受付までお越しください。');
@@ -152,8 +153,7 @@
                         };
                         const doneBtn = document.createElement('button');
                         doneBtn.className = 'menu-button';
-                        doneBtn.style.marginTop = '1em';
-                        doneBtn.style.marginLeft = '1em';
+                        doneBtn.style.cssText = btnStyle + 'margin-left:0;';
                         doneBtn.textContent = '完了';
                         doneBtn.onclick = async function() {
                             // 先頭予約を削除
