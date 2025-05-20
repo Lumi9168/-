@@ -100,21 +100,26 @@
         // 予約情報を取得して表示
         const reservationList = document.getElementById('reservation-list');
 
-        function updateReservations() {
+        async function updateReservations() {
             const selectedDate = dateField.value;
-            const reservations = JSON.parse(localStorage.getItem('reservations')) || [];
-            const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
-
-            if (filteredReservations.length === 0) {
-                reservationList.innerHTML = '<tr><td colspan="3">現在の登録はありません</td></tr>';
-            } else {
-                reservationList.innerHTML = filteredReservations.map((reservation, index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${reservation.companyName}</td>
-                        <td>${reservation.driverName}</td>
-                    </tr>
-                `).join('');
+            try {
+                const res = await fetch('/api/reservations');
+                const data = await res.json();
+                const reservations = (data.reservations || []);
+                const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
+                if (filteredReservations.length === 0) {
+                    reservationList.innerHTML = '<tr><td colspan="3">現在の登録はありません</td></tr>';
+                } else {
+                    reservationList.innerHTML = filteredReservations.map((reservation, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${reservation.companyName}</td>
+                            <td>${reservation.driverName}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                reservationList.innerHTML = '<tr><td colspan="3" style="color:red;">予約情報の取得に失敗しました</td></tr>';
             }
         }
 
