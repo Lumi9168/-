@@ -28,25 +28,11 @@
     <main>
         <section id="date-selection">
             <label for="date">日付:</label>
-            <input type="date" id="date" name="date" required>
+            <input type="date" id="date" name="date" required style="font-size:1.2em;padding:0.5em 1em;width:220px;max-width:90vw;">
         </section>
         <section id="reservations">
             <h2>予約一覧</h2>
-            <table id="reservation-table">
-                <thead>
-                    <tr>
-                        <th>番号</th>
-                        <th>会社名</th>
-                        <th>ドライバー名</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="reservation-list">
-                    <tr>
-                        <td colspan="4">現在の登録はありません</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="reservation-list"></div>
         </section>
     </main>
     <footer>

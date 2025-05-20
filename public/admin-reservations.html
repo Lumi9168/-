@@ -100,12 +100,17 @@
                 </div>`;
                 // 2件目以降
                 if (reservations.length > 1) {
-                    html += '<div><strong>以降の予約</strong><ul>';
+                    html += '<div><strong>以降の予約</strong>';
                     for (let i = 1; i < reservations.length; i++) {
                         const r = reservations[i];
-                        html += `<li>${r.date || ''} ${r.companyName || ''} ${r.driverName || ''} ${r.phoneNumber || ''}</li>`;
+                        html += `<div class="reservation-card" style="background:#fff;border-radius:8px;box-shadow:0 1px 4px #e0e0e0;padding:0.8em 1em;margin-bottom:0.8em;">
+                            <div style="font-weight:bold;color:#b22222;">${i + 1}. ${r.companyName || ''}</div>
+                            <div style="margin-top:0.2em;">ドライバー名: <span style="font-weight:bold;">${r.driverName}</span></div>
+                            <div style="margin-top:0.2em;">荷物の概要: <span style="color:#333;">${r.cargoSummary || ''}</span></div>
+                            <div style="margin-top:0.2em;font-size:0.95em;color:#666;">電話番号: ${r.phoneNumber}</div>
+                        </div>`;
                     }
-                    html += '</ul></div>';
+                    html += '</div>';
                 }
                 section.innerHTML = html;
                 // 呼出ボタンでSMS送信
