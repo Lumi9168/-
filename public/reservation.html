@@ -103,7 +103,8 @@
                 driverName: document.getElementById('driver-name').value,
                 companyName: document.getElementById('company-name').value,
                 phoneNumber: document.getElementById('phone-number').value,
-                cargoSummary: document.getElementById('cargo-summary').value
+                cargoSummary: document.getElementById('cargo-summary').value,
+                branch: (localStorage.getItem('admin_branch') || 'kagoshima')
             };
 
             // APIへPOST

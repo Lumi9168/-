@@ -61,8 +61,9 @@
 
         async function updateReservations() {
             const selectedDate = dateField.value;
+            const branch = localStorage.getItem('admin_branch') || 'kagoshima';
             try {
-                const res = await fetch('/api/reservations');
+                const res = await fetch(`/api/reservations?branch=${encodeURIComponent(branch)}`);
                 const data = await res.json();
                 const reservations = (data.reservations || []);
                 const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
@@ -95,10 +96,11 @@
                 // 削除対象を除外した新リストを作成
                 const toDelete = filteredReservations[index];
                 const newList = reservations.filter(r => r !== toDelete);
+                const branch = localStorage.getItem('admin_branch') || 'kagoshima';
                 await fetch('/api/reservations', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reservations: newList })
+                    body: JSON.stringify({ reservations: newList, branch })
                 });
                 alert('予約を削除しました');
                 updateReservations();

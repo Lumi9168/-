@@ -92,7 +92,8 @@
         async function updateReservations() {
             const selectedDate = dateField.value;
             try {
-                const res = await fetch('/api/reservations');
+                const branch = localStorage.getItem('admin_branch') || 'kagoshima';
+                const res = await fetch(`/api/reservations?branch=${encodeURIComponent(branch)}`);
                 const data = await res.json();
                 const reservations = (data.reservations || []);
                 const filteredReservations = reservations.filter(reservation => reservation.date === selectedDate);
