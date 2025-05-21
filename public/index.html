@@ -69,7 +69,7 @@
                 }
             });
             // 予約件数表示
-            fetch('/api/reservations')
+            fetch(`/api/reservations?branch=${encodeURIComponent(branch)}`)
                 .then(res => res.json())
                 .then(data => {
                     const reservations = (data.reservations || []);

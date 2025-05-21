@@ -218,13 +218,23 @@
                         doneBtn.style.cssText = btnStyle + 'margin-left:0;';
                         doneBtn.textContent = '完了';
                         doneBtn.onclick = async function() {
-                            // 先頭予約を削除
-                            const newList = allReservations.filter(r => !(r.date === selectedDate && r === first));
+                            // 先頭予約を削除（内容一致で）
+                            const newList = allReservations.filter(r => {
+                                if (r.date !== selectedDate) return true;
+                                // 内容一致で除外
+                                return !(
+                                    r.date === first.date &&
+                                    r.driverName === first.driverName &&
+                                    r.companyName === first.companyName &&
+                                    r.phoneNumber === first.phoneNumber &&
+                                    r.cargoSummary === first.cargoSummary
+                                );
+                            });
                             try {
                                 await fetch('/api/reservations', {
                                     method: 'PUT',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ reservations: newList })
+                                    body: JSON.stringify({ reservations: newList, branch })
                                 });
                                 callState = 'call';
                                 loadReservations();
