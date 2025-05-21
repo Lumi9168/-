@@ -81,11 +81,35 @@
         let allReservations = [];
         let selectedDate = '';
 
+        function getTodayStr() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+        function getTomorrowStr() {
+            const t = new Date();
+            t.setDate(t.getDate() + 1);
+            const yyyy = t.getFullYear();
+            const mm = String(t.getMonth() + 1).padStart(2, '0');
+            const dd = String(t.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // 拠点名表示
             const branch = localStorage.getItem('admin_branch') || 'kagoshima';
             const header = document.querySelector('header h1');
             if(header) header.innerHTML = `現在の予約状況<br>（拠点: ${branch === 'kagoshima' ? '鹿児島' : branch}）`;
+            // 17時以降は翌日分、17時前は本日分を初期表示
+            const now = new Date();
+            if (now.getHours() >= 17) {
+                selectedDate = getTomorrowStr();
+            } else {
+                selectedDate = getTodayStr();
+            }
+            loadReservations();
         });
 
         // 認証・branchチェック
@@ -106,17 +130,16 @@
                 const dateList = Array.from(dateSet).sort();
                 // 日付選択肢をセット
                 const dateInput = document.getElementById('date-select');
+                // 初期表示は必ず本日
+                if (!selectedDate) {
+                    selectedDate = getTodayStr();
+                }
+                // 日付選択肢の範囲をセット
                 if (dateList.length > 0) {
-                    if (!selectedDate || !dateList.includes(selectedDate)) {
-                        selectedDate = dateList[0];
-                    }
-                    dateInput.value = selectedDate;
                     dateInput.min = dateList[0];
                     dateInput.max = dateList[dateList.length-1];
-                } else {
-                    selectedDate = '';
-                    dateInput.value = '';
                 }
+                dateInput.value = selectedDate;
                 // 選択日付の予約のみ表示
                 const reservations = allReservations.filter(r => r.date === selectedDate);
                 if (reservations.length === 0) {
@@ -250,7 +273,10 @@
             selectedDate = this.value;
             loadReservations();
         });
-        document.addEventListener('DOMContentLoaded', loadReservations);
+        document.addEventListener('DOMContentLoaded', function() {
+            selectedDate = getTodayStr();
+            loadReservations();
+        });
     </script>
 </body>
 </html>

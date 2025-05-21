@@ -116,6 +116,7 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
+                    alert('予約が完了しました');
                     window.location.href = 'current-reservations.html';
                     return;
                 } else {
